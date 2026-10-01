@@ -1,0 +1,72 @@
+/* Shared look for the accounts module. If your team already has theme tokens,
+   keep theirs and just map these names to them. Fonts are loaded in index.html. */
+:root {
+  color-scheme: dark;
+  --ground: #11232b;
+  --raised: #183039;
+  --lift: #1f3b46;
+  --bone: #ece6d6;
+  --fog: #8fa3ab;
+  --line: rgba(236, 230, 214, 0.13);
+  --focus: #f3ebd3;
+  --heat-0: #3f8f93;
+  --heat-1: #e2b24a;
+  --heat-2: #e2742f;
+  --heat-3: #d62f2f;
+}
+
+body {
+  background: var(--ground);
+  color: var(--bone);
+  font-family: 'Archivo', system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: 'Archivo', sans-serif;
+  font-stretch: 125%;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+}
+.font-note { font-family: 'Newsreader', Georgia, serif; line-height: 1.55; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+.br-panel { background: var(--raised); }
+.br-lift { background: var(--lift); }
+.br-text { color: var(--bone); }
+.br-muted { color: var(--fog); }
+.br-line { border-color: var(--line); }
+
+.br-input {
+  width: 100%;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--bone);
+}
+.br-input::placeholder { color: var(--fog); opacity: 0.7; }
+
+.br-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  border-radius: 10px; padding: 0.6rem 1rem;
+  font-size: 0.875rem; font-weight: 600;
+  background: var(--bone); color: var(--ground);
+  transition: transform 0.15s, background 0.15s;
+}
+.br-btn:hover { background: #fff7e3; }
+.br-btn:active { transform: translateY(1px); }
+.br-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.br-btn-quiet {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  border-radius: 10px; padding: 0.5rem 0.85rem;
+  font-size: 0.8125rem; font-weight: 500;
+  border: 1px solid var(--line); color: var(--bone);
+  transition: background 0.15s;
+}
+.br-btn-quiet:hover { background: var(--lift); }
+.br-btn-danger { color: #f2897a; border-color: rgba(242, 137, 122, 0.4); }
+
+.br-choice:focus-within,
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
