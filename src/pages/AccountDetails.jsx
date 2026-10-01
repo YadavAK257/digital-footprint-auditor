@@ -38,15 +38,15 @@ function explain(a, { recovers, reusePeers }) {
 function LinkList({ title, items, relation }) {
   if (!items.length) return null;
   return (
-    <div>
-      <h3 className="text-sm font-medium br-muted">{title}</h3>
-      <ul className="mt-1.5 space-y-1">
+    <div className="detail-link-list">
+      <h3>{title}</h3>
+      <ul>
         {items.map((x) => (
           <li key={x.id}>
-            <Link to={`/accounts/${x.id}`} className="text-base underline decoration-[color:var(--line)] underline-offset-4 hover:decoration-[color:var(--bone)]">
+            <Link to={`/accounts/${x.id}`}>
               {x.name}
             </Link>
-            {relation && <span className="ml-2 text-xs br-muted">{relation(x)}</span>}
+            {relation && <span className="detail-link-relation">{relation(x)}</span>}
           </li>
         ))}
       </ul>
@@ -91,202 +91,206 @@ export default function AccountDetails() {
   const hasConnections = recovers.length || recoveredBy || ssoProvider || reusePeers.length;
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-      <div className="flex items-center justify-between">
-        <Link to="/accounts" className="br-btn-quiet">
-          <ArrowLeft size={14} aria-hidden="true" />
-          All accounts
-        </Link>
-        <span className="inline-flex items-center gap-1.5 text-sm br-muted" aria-live="polite">
-          {saved && (<><Check size={14} aria-hidden="true" />Changes saved</>)}
-        </span>
-      </div>
+    <main className="detail-page-shell">
+      <div className="detail-page">
+        <div className="detail-toolbar-row">
+          <Link to="/accounts" className="detail-back-button">
+            <ArrowLeft size={14} aria-hidden="true" />
+            All accounts
+          </Link>
+          <span className="detail-status-text" aria-live="polite">
+            {saved && (<><Check size={14} aria-hidden="true" />Changes saved</>)}
+          </span>
+        </div>
 
-      <header className="mt-8 flex flex-wrap items-end justify-between gap-6">
-        <div className="flex items-center gap-5">
-          <Monogram name={account.name} category={account.category} risk={risk} size={72} />
-          <div>
-            <h1 className="font-display text-4xl sm:text-5xl">{account.name}</h1>
-            <p className="mt-2 br-muted">
-              {CATEGORIES[account.category]?.label ?? 'Other'}, signs in with {SIGN_IN[account.signIn ?? 'password'].toLowerCase()}
-            </p>
+        <header className="detail-header">
+          <div className="detail-account-identity">
+            <Monogram name={account.name} category={account.category} risk={risk} size={58} />
+            <div>
+              <h1 className="detail-account-title">{account.name}</h1>
+              <p className="detail-account-subtitle">
+                {CATEGORIES[account.category]?.label ?? 'Other'}, signs in with {SIGN_IN[account.signIn ?? 'password'].toLowerCase()}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="text-right">
-          <RiskNumber value={Math.round(risk * 100)} color={color} />
-          <p className="text-sm br-muted">{level.label} risk, out of 100</p>
-        </div>
-      </header>
 
-      <p className="font-note mt-6 max-w-prose text-2xl">{explain(account, { recovers, reusePeers })}</p>
-      <p className="mt-2 text-xs br-muted">
-        {account.risk !== undefined
-          ? 'Includes risk flowing in from connected accounts.'
-          : 'Based on this account alone. The map shows how risk spreads from connected accounts.'}
-      </p>
+          <div className="detail-risk-block">
+            <RiskNumber value={Math.round(risk * 100)} color={color} />
+            <p className="detail-risk-copy">{level.label} risk, out of 100</p>
+          </div>
+        </header>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-8">
-          <section className="br-panel br-line space-y-6 rounded-2xl border p-6">
-            <h2 className="text-lg font-semibold">How you sign in</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Sign-in method" htmlFor="d-signin">
-                <select
-                  id="d-signin"
-                  className="br-input"
-                  value={account.signIn ?? 'password'}
-                  onChange={(e) => save({ signIn: e.target.value, ssoProviderId: e.target.value === 'sso' ? account.ssoProviderId : undefined })}
-                >
-                  {Object.entries(SIGN_IN).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
-                </select>
-              </Field>
-              {account.signIn === 'sso' && (
-                <Field label="Signs in with" htmlFor="d-sso">
-                  <select id="d-sso" className="br-input" value={account.ssoProviderId ?? ''} onChange={(e) => save({ ssoProviderId: e.target.value || undefined })}>
-                    <option value="">Choose an account</option>
+        <p className="detail-summary-text">{explain(account, { recovers, reusePeers })}</p>
+        <p className="detail-footnote">
+          {account.risk !== undefined
+            ? 'Includes risk flowing in from connected accounts.'
+            : 'Based on this account alone. The map shows how risk spreads from connected accounts.'}
+        </p>
+
+        <div className="detail-layout">
+          <div className="detail-main-column">
+            <section className="detail-panel detail-panel-main">
+              <h2 className="detail-panel-title">How you sign in</h2>
+
+              <div className="detail-input-row">
+                <Field label="Sign-in method" htmlFor="d-signin">
+                  <select
+                    id="d-signin"
+                    className="br-input"
+                    value={account.signIn ?? 'password'}
+                    onChange={(e) => save({ signIn: e.target.value, ssoProviderId: e.target.value === 'sso' ? account.ssoProviderId : undefined })}
+                  >
+                    {Object.entries(SIGN_IN).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+                  </select>
+                </Field>
+                {account.signIn === 'sso' && (
+                  <Field label="Signs in with" htmlFor="d-sso">
+                    <select id="d-sso" className="br-input" value={account.ssoProviderId ?? ''} onChange={(e) => save({ ssoProviderId: e.target.value || undefined })}>
+                      <option value="">Choose an account</option>
+                      {others.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                    </select>
+                  </Field>
+                )}
+              </div>
+
+              <div className="detail-section-spacer">
+                <p className="detail-field-label">Second step when signing in</p>
+                <TwoFactorPicker value={account.twoFactor ?? 'none'} onChange={(twoFactor) => save({ twoFactor })} name="detail-2fa" />
+              </div>
+
+              <h2 className="detail-panel-title detail-panel-title-with-space">If you lose access</h2>
+              <div className="detail-input-row detail-recovery-row">
+                <Field label="Recovery email" htmlFor="d-rec">
+                  <select id="d-rec" className="br-input" value={account.recoveryEmailId ?? ''} onChange={(e) => save({ recoveryEmailId: e.target.value || undefined })}>
+                    <option value="">None</option>
                     {others.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                   </select>
                 </Field>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Second step when signing in</p>
-              <TwoFactorPicker value={account.twoFactor ?? 'none'} onChange={(twoFactor) => save({ twoFactor })} name="detail-2fa" />
-            </div>
-
-            <h2 className="pt-2 text-lg font-semibold">If you lose access</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <Field label="Recovery email" htmlFor="d-rec">
-                <select id="d-rec" className="br-input" value={account.recoveryEmailId ?? ''} onChange={(e) => save({ recoveryEmailId: e.target.value || undefined })}>
-                  <option value="">None</option>
-                  {others.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-                </select>
-              </Field>
-              <Field label="Recovery phone" htmlFor="d-phone" hint="A label like Jio SIM, not the number.">
-                <input
-                  key={`phone-${account.id}`}
-                  id="d-phone"
-                  className="br-input"
-                  defaultValue={account.recoveryPhone ?? ''}
-                  onBlur={(e) => save({ recoveryPhone: e.target.value.trim() || undefined })}
-                />
-              </Field>
-              <Field label="Password group" htmlFor="d-group" hint="Same letter means same password.">
-                <input
-                  key={`group-${account.id}`}
-                  id="d-group"
-                  maxLength={3}
-                  className="br-input"
-                  defaultValue={account.reuseGroup ?? ''}
-                  onBlur={(e) => save({ reuseGroup: e.target.value.trim() || undefined })}
-                />
-              </Field>
-            </div>
-
-            <h2 className="pt-2 text-lg font-semibold">History</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Last used" htmlFor="d-last">
-                <input
-                  id="d-last"
-                  type="date"
-                  max={new Date().toISOString().slice(0, 10)}
-                  className="br-input"
-                  value={account.lastActiveAt ? account.lastActiveAt.slice(0, 10) : ''}
-                  onChange={(e) => e.target.value && save({ lastActiveAt: new Date(e.target.value).toISOString() })}
-                />
-              </Field>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium">
+                <Field label="Recovery phone" htmlFor="d-phone" hint="A label like Jio SIM, not the number.">
                   <input
-                    type="checkbox"
-                    checked={!!account.breach}
-                    onChange={(e) => save({ breach: e.target.checked ? { year: new Date().getFullYear() - 1, severity: 0.6 } : null })}
+                    key={`phone-${account.id}`}
+                    id="d-phone"
+                    className="br-input"
+                    defaultValue={account.recoveryPhone ?? ''}
+                    onBlur={(e) => save({ recoveryPhone: e.target.value.trim() || undefined })}
                   />
-                  Appeared in a known breach
-                </label>
-                {account.breach && (
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      key={`by-${account.id}`}
-                      aria-label="Breach year"
-                      type="number"
-                      min="2000"
-                      max={new Date().getFullYear()}
-                      className="br-input"
-                      defaultValue={account.breach.year}
-                      onBlur={(e) => e.target.value && save({ breach: { ...account.breach, year: Number(e.target.value) } })}
-                    />
-                    <select
-                      aria-label="Breach severity"
-                      className="br-input"
-                      value={String(account.breach.severity)}
-                      onChange={(e) => save({ breach: { ...account.breach, severity: Number(e.target.value) } })}
-                    >
-                      <option value="0.3">Minor</option>
-                      <option value="0.6">Passwords exposed</option>
-                      <option value="0.9">Passwords and data</option>
-                    </select>
-                  </div>
-                )}
+                </Field>
+                <Field label="Password group" htmlFor="d-group" hint="Same letter means same password.">
+                  <input
+                    key={`group-${account.id}`}
+                    id="d-group"
+                    maxLength={3}
+                    className="br-input"
+                    defaultValue={account.reuseGroup ?? ''}
+                    onBlur={(e) => save({ reuseGroup: e.target.value.trim() || undefined })}
+                  />
+                </Field>
               </div>
-            </div>
-          </section>
 
-          <section className="br-panel br-line rounded-2xl border p-6">
-            <PermissionPanel permissions={account.permissions ?? []} onChange={(permissions) => save({ permissions })} />
-          </section>
-        </div>
+              <h2 className="detail-panel-title detail-panel-title-with-space">History</h2>
+              <div className="detail-input-row detail-history-row">
+                <Field label="Last used" htmlFor="d-last">
+                  <input
+                    id="d-last"
+                    type="date"
+                    max={new Date().toISOString().slice(0, 10)}
+                    className="br-input"
+                    value={account.lastActiveAt ? account.lastActiveAt.slice(0, 10) : ''}
+                    onChange={(e) => e.target.value && save({ lastActiveAt: new Date(e.target.value).toISOString() })}
+                  />
+                </Field>
+                <div className="detail-history-checkbox">
+                  <label className="detail-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={!!account.breach}
+                      onChange={(e) => save({ breach: e.target.checked ? { year: new Date().getFullYear() - 1, severity: 0.6 } : null })}
+                    />
+                    Appeared in a known breach
+                  </label>
+                  {account.breach && (
+                    <div className="detail-breach-grid">
+                      <input
+                        key={`by-${account.id}`}
+                        aria-label="Breach year"
+                        type="number"
+                        min="2000"
+                        max={new Date().getFullYear()}
+                        className="br-input"
+                        defaultValue={account.breach.year}
+                        onBlur={(e) => e.target.value && save({ breach: { ...account.breach, year: Number(e.target.value) } })}
+                      />
+                      <select
+                        aria-label="Breach severity"
+                        className="br-input"
+                        value={String(account.breach.severity)}
+                        onChange={(e) => save({ breach: { ...account.breach, severity: Number(e.target.value) } })}
+                      >
+                        <option value="0.3">Minor</option>
+                        <option value="0.6">Passwords exposed</option>
+                        <option value="0.9">Passwords and data</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
 
-        <aside className="space-y-8">
-          <div className="space-y-5">
-            <h2 className="text-lg font-semibold">Connections</h2>
-            {hasConnections ? (
-              <>
-                <LinkList title="Recovered through" items={recoveredBy ? [recoveredBy] : []} />
-                <LinkList title="Signs in with" items={ssoProvider ? [ssoProvider] : []} />
-                <LinkList
-                  title={`Recovers ${recovers.length} ${recovers.length === 1 ? 'account' : 'accounts'}`}
-                  items={recovers}
-                  relation={(x) => (x.ssoProviderId === account.id ? 'sign-in' : 'recovery email')}
-                />
-                <LinkList title="Shares a password with" items={reusePeers} />
-              </>
-            ) : (
-              <p className="font-note text-lg br-muted">
-                No connections recorded. Add a recovery email or password group to see how risk reaches this account.
-              </p>
-            )}
+            <section className="detail-panel">
+              <PermissionPanel permissions={account.permissions ?? []} onChange={(permissions) => save({ permissions })} />
+            </section>
           </div>
 
-          <div className="br-line border-t pt-6">
-            <AnimatePresence mode="wait" initial={false}>
-              {confirmDelete ? (
-                <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-                  <p className="font-note text-lg">This removes {account.name} from your map and clears links that point to it.</p>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      className="br-btn-quiet br-btn-danger"
-                      onClick={() => { removeAccount(account.id); navigate('/accounts', { replace: true }); }}
-                    >
-                      <Trash2 size={14} aria-hidden="true" />
-                      Delete account
-                    </button>
-                    <button type="button" className="br-btn-quiet" onClick={() => setConfirmDelete(false)}>Keep it</button>
-                  </div>
-                </motion.div>
+          <aside className="detail-side-column">
+            <div className="detail-side-panel">
+              <h2 className="detail-side-title">Connections</h2>
+              {hasConnections ? (
+                <>
+                  <LinkList title="Recovered through" items={recoveredBy ? [recoveredBy] : []} />
+                  <LinkList title="Signs in with" items={ssoProvider ? [ssoProvider] : []} />
+                  <LinkList
+                    title={`Recovers ${recovers.length} ${recovers.length === 1 ? 'account' : 'accounts'}`}
+                    items={recovers}
+                    relation={(x) => (x.ssoProviderId === account.id ? 'sign-in' : 'recovery email')}
+                  />
+                  <LinkList title="Shares a password with" items={reusePeers} />
+                </>
               ) : (
-                <motion.div key="ask" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <button type="button" className="br-btn-quiet" onClick={() => setConfirmDelete(true)}>
-                    <Trash2 size={14} aria-hidden="true" />
-                    Delete account record
-                  </button>
-                </motion.div>
+                <p className="detail-side-empty">
+                  No connections recorded. Add a recovery email or password group to see how risk reaches this account.
+                </p>
               )}
-            </AnimatePresence>
-          </div>
-        </aside>
+            </div>
+
+            <div className="detail-side-action-wrap">
+              <AnimatePresence mode="wait" initial={false}>
+                {confirmDelete ? (
+                  <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="detail-delete-confirm">
+                    <p className="font-note text-lg">This removes {account.name} from your map and clears links that point to it.</p>
+                    <div className="detail-delete-actions">
+                      <button
+                        type="button"
+                        className="detail-delete-button danger"
+                        onClick={() => { removeAccount(account.id); navigate('/accounts', { replace: true }); }}
+                      >
+                        <Trash2 size={14} aria-hidden="true" />
+                        Delete account
+                      </button>
+                      <button type="button" className="detail-delete-button" onClick={() => setConfirmDelete(false)}>Keep it</button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div key="ask" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <button type="button" className="detail-delete-button" onClick={() => setConfirmDelete(true)}>
+                      <Trash2 size={14} aria-hidden="true" />
+                      Delete account record
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </aside>
+        </div>
       </div>
     </main>
   );
