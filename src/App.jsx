@@ -1,50 +1,54 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-function Dashboard() {
-  return <h1>Dashboard</h1>;
-}
+import Layout from "./components/Layout";
 
-function Accounts() {
-  return <h1>Accounts</h1>;
-}
-
-function Footprint() {
-  return <h1>Digital Footprint</h1>;
-}
-
-function Actions() {
-  return <h1>Security Actions</h1>;
-}
-
-function BreachSimulator() {
-  return <h1>Breach Simulator</h1>;
-}
-
-function Activity() {
-  return <h1>Activity</h1>;
-}
+import Dashboard from "./pages/Dashboard";
+import Footprint from "./pages/Footprint";
+import Actions from "./pages/Actions";
+import BreachSimulator from "./pages/BreachSimulator";
+import Activity from "./pages/Activity";
 
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
 
-        <Route path="/" element={<Dashboard />} />
+        <Route element={<Layout />}>
 
-        <Route path="/accounts" element={<Accounts />} />
+          <Route
+            path="/"
+            element={<Dashboard />}
+          />
 
-        <Route path="/footprint" element={<Footprint />} />
+          <Route
+            path="/footprint"
+            element={<Footprint />}
+          />
 
-        <Route path="/actions" element={<Actions />} />
+          <Route
+            path="/actions"
+            element={<Actions />}
+          />
 
-        <Route
-          path="/breach"
-          element={<BreachSimulator />}
-        />
+          <Route
+            path="/breach-simulator"
+            element={<BreachSimulator />}
+          />
 
-        <Route path="/activity" element={<Activity />} />
+          <Route
+            path="/activity"
+            element={<Activity />}
+          />
+
+        </Route>
 
       </Routes>
+
     </BrowserRouter>
   );
 }
